@@ -51,9 +51,15 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/flutter_lints-3.0.2",
+      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/flutter_lints-4.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "flutter_slidable",
+      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/flutter_slidable-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "flutter_test",
@@ -81,9 +87,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/lints-3.0.0",
+      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/lints-4.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.1"
     },
     {
       "name": "matcher",
@@ -104,10 +110,22 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "nested",
+      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path",
       "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/path-1.9.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "provider",
+      "rootUri": "file:///Users/yeomi/.pub-cache/hosted/pub.dev/provider-6.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "sky_engine",
@@ -170,7 +188,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-05-10T16:38:36.480170Z",
+  "generated": "2024-05-10T17:39:06.049608Z",
   "generator": "pub",
   "generatorVersion": "3.3.4"
 }
