@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, ready_for_review]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   assign:
     runs-on: ubuntu-latest
@@ -11,6 +15,6 @@ jobs:
       - name: Assign review and assignees
         uses: hkusu/review-assign-action@v1
         with:
-          assignees: ${{ github.actor }} # Assign pull request author
-          reviewers: Surviveyeomi, Ryu-GeonWoo # Assigned when draft is released
-          github-token: ${{ secrets.GITHUB_TOKEN }} # Use GitHub provided token
+          assignees: ${{ github.actor }}
+          reviewers: Surviveyeomi, Ryu-GeonWoo
+          github-token: ${{ secrets.GITHUB_TOKEN }}
