@@ -1,4 +1,8 @@
 import 'package:dialog_flowtter/dialog_flowtter.dart';
+
+import '../book/book_find.dart';
+import '../model/book.dart';
+
 /*
 사용
   late DialogFlowtter dialogflow = getDialogflow(); - dialogflow 연동
@@ -17,8 +21,9 @@ import 'package:dialog_flowtter/dialog_flowtter.dart';
       addMessage(response.message!);
     });
   }
-
  */
+
+// 연결 응답 받기
 Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String text) async {
   QueryInput queryInput = QueryInput(
     text: TextInput(
@@ -34,3 +39,18 @@ Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String text)
   return response;
 }
 
+// parameter 추출
+Future<List<Book>?> bookFind(DetectIntentResponse response) async {
+  BookService bookService = BookService();
+
+  Map<String, dynamic>? parameters = response.queryResult?.parameters;
+  if (parameters != null && parameters["Author"] != null) {
+    print("author");
+    return bookService.getBookList(parameters["Author"], "Author");
+  } else if (parameters != null && parameters["Keyword"] != null) {
+    print("Keyword");
+    return bookService.getBookList(parameters["Keyword"], "Keyword");
+  } else {
+    return null;
+  }
+}

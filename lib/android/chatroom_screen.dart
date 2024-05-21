@@ -109,9 +109,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // dialogflow 연동
       DetectIntentResponse response = await getResponse(dialogflow, text);
 
+      print(response);
       print(response.toJson());
       print(response.message);
       print(response.text);
+      print(response.toJson());
+      print(bookFind(response));
 
       // Bot 응답 시뮬레이션
       var botResponse = response.text;
