@@ -1,6 +1,9 @@
+import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../chatroom_manager.dart';
+import '../dialogflow/dialogflow.dart';
+import '../dialogflow/dialogflow_service.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
@@ -12,6 +15,7 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  late DialogFlowtter dialogflow = getDialogflow();
   List<Map<String, dynamic>> messages = [];
   TextEditingController messageController = TextEditingController();
   late ChatRoomManager manager;
@@ -101,8 +105,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // 메시지 업데이트 메서드 실행 완료를 기다림
       manager.updateLastMessage(widget.roomId, text, now);
 
+
+      // dialogflow 연동
+      DetectIntentResponse response = await getResponse(dialogflow, text);
+
+      print(response.toJson());
+      print(response.message);
+      print(response.text);
+
       // Bot 응답 시뮬레이션
-      var botResponse = 'ChakBot 응답 예시';
+      var botResponse = response.text;
       await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
       setState(() {
         messages.add({
@@ -112,7 +124,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           'time': now.add(Duration(seconds: 1)),
         });
       });
-      manager.updateLastMessage(widget.roomId, botResponse, now.add(Duration(seconds: 1)));
+      manager.updateLastMessage(widget.roomId, botResponse as String, now.add(Duration(seconds: 1)));
     }
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dialogflow.dispose();
+  }
+
 }
