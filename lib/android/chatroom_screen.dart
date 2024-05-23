@@ -118,7 +118,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
       // Bot 응답 시뮬레이션
       var botResponse = response.text;
-      await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
+      //await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
       setState(() {
         messages.add({
           'id': now.add(Duration(seconds: 1)).millisecondsSinceEpoch.toString(),
