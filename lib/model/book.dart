@@ -57,4 +57,9 @@ class Book {
     data['url'] = this.url;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Title: $title, Author(s): $authors';
+  }
 }

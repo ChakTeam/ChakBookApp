@@ -1,9 +1,9 @@
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import '../chatroom_manager.dart';
 import '../dialogflow/dialogflow.dart';
 import '../dialogflow/dialogflow_service.dart';
+import '../model/book.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final String roomId;
@@ -19,6 +19,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   List<Map<String, dynamic>> messages = [];
   TextEditingController messageController = TextEditingController();
   late ChatRoomManager manager;
+  List<Book>? bookList;
 
   @override
   void initState() {
@@ -109,12 +110,20 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // dialogflow 연동
       DetectIntentResponse response = await getResponse(dialogflow, text);
 
-      print(response);
-      print(response.toJson());
-      print(response.message);
-      print(response.text);
-      print(response.toJson());
-      print(bookFind(response));
+      // print(response.toJson());
+      // print(response.message);
+      // print(response.text);
+      String intent = response.toJson()['queryResult']['intent']['displayName'];
+      print(intent); // intent 반환
+      bookList = await bookFind(response);
+      // bookList가 null이 아닌 경우에만 출력
+      if (bookList != null) {
+        for (Book book in bookList!) {
+          print(book.toString());
+        }
+      } else {
+        print('Book list is null.');
+      }
 
       // Bot 응답 시뮬레이션
       var botResponse = response.text;
