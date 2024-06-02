@@ -12,6 +12,5 @@ DialogFlowtter getDialogflow() {
       sessionId: info.sessionId,
       projectId: info.projectId
   );
-
   return dialogflow;
 }

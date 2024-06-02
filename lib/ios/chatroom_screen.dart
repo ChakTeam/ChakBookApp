@@ -1,4 +1,4 @@
-//chatroom_screen.dart
+import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import '../chatroom_manager.dart';
@@ -13,6 +13,7 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  late DialogFlowtter dialogflow;
   List<Map<String, dynamic>> messages = [];
   TextEditingController messageController = TextEditingController();
   late ChatRoomManager manager;
@@ -25,6 +26,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (existingRoom != null) {
       messages = existingRoom.messages;
     }
+
+    // DialogFlowtter 초기화
+    DialogFlowtter.fromFile(path: 'assets/cred.json').then((instance) {
+      setState(() {
+        dialogflow = instance;
+      });
+    }).catchError((error) {
+      print("Failed to load Dialogflow credentials: $error");
+    });
   }
 
   @override
@@ -48,7 +58,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: message['userType'] == 'ChakBot' ? CupertinoColors.activeGreen.withOpacity(0.3) : CupertinoColors.activeBlue.withOpacity(0.3),
+                        color: message['userType'] == 'ChakBot'
+                            ? CupertinoColors.activeGreen.withOpacity(0.3)
+                            : CupertinoColors.activeBlue.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -89,7 +101,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void sendMessage() async {
     String text = messageController.text.trim();
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty && dialogflow != null) {
       var now = DateTime.now();
       setState(() {
         messages.add({
@@ -103,9 +115,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // 메시지 업데이트 메서드 실행 완료를 기다림
       manager.updateLastMessage(widget.roomId, text, now);
 
+      // Dialogflow 연동
+      DetectIntentResponse response = await getResponse(dialogflow, text);
+
+      print(response.toJson());
+      print(response.message);
+      print(response.text);
+
       // Bot 응답 시뮬레이션
-      var botResponse = 'ChakBot 응답 예시';
-      await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
+      var botResponse = response.text;
+      await Future.delayed(Duration(seconds: 1)); // 네트워크 지연 시뮬레이션
       setState(() {
         messages.add({
           'id': now.add(Duration(seconds: 1)).millisecondsSinceEpoch.toString(),
@@ -113,14 +132,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           'text': botResponse,
         });
       });
-      manager.updateLastMessage(widget.roomId, botResponse, now.add(Duration(seconds: 1)));
+      manager.updateLastMessage(widget.roomId, botResponse as String, now.add(Duration(seconds: 1)));
     }
   }
 
-  Future<String> simulateChakBotResponse(String userMessage) async {
-    // Simulate network latency with a delay
-    await Future.delayed(Duration(seconds: 1));
-    return 'ChakBot 응답 예시: $userMessage';
+  Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String query) async {
+    final QueryInput queryInput = QueryInput(text: TextInput(text: query));
+    final DetectIntentResponse response = await dialogflow.detectIntent(queryInput: queryInput);
+    return response;
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    dialogflow.dispose();
+  }
 }

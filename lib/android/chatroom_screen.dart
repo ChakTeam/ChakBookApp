@@ -28,6 +28,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     if (existingRoom != null) {
       messages = existingRoom.messages;
     }
+
+    // DialogFlowtter 초기화
+    DialogFlowtter.fromFile(path: 'assets/cred.json').then((instance) {
+      setState(() {
+        dialogflow = instance;
+      });
+    }).catchError((error) {
+      print("Failed to load Dialogflow credentials: $error");
+    });
   }
 
   @override
@@ -90,7 +99,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void sendMessage() async {
     String text = messageController.text.trim();
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty && dialogflow != null) {
       var now = DateTime.now();
       setState(() {
         messages.add({
@@ -118,7 +127,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
       // Bot 응답 시뮬레이션
       var botResponse = response.text;
-      await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
+      //await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
       setState(() {
         messages.add({
           'id': now.add(Duration(seconds: 1)).millisecondsSinceEpoch.toString(),
@@ -136,5 +145,4 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     super.dispose();
     dialogflow.dispose();
   }
-
 }
