@@ -15,7 +15,7 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  late DialogFlowtter dialogflow;
+  late DialogFlowtter dialogflow = getDialogflow();
   List<Map<String, dynamic>> messages = [];
   TextEditingController messageController = TextEditingController();
   late ChatRoomManager manager;
@@ -114,36 +114,30 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // 메시지 업데이트 메서드 실행 완료를 기다림
       manager.updateLastMessage(widget.roomId, text, now);
 
-      // Dialogflow 연동
-      try {
-        DetectIntentResponse response = await getResponse(dialogflow!, text);
-        print('Response: ${response.toJson()}');
 
-        if (response.message != null && response.message!.text != null && response.message!.text!.text != null && response.message!.text!.text!.isNotEmpty) {
-          var botResponse = response.message!.text!.text![0];
-          await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
-          setState(() {
-            messages.add({
-              'id': now.add(Duration(seconds: 1)).millisecondsSinceEpoch.toString(),
-              'userType': 'ChakBot',
-              'text': botResponse,
-              'time': now.add(Duration(seconds: 1)),
-            });
-          });
-          manager.updateLastMessage(widget.roomId, botResponse, now.add(Duration(seconds: 1)));
-        } else {
-          print('Error: No response text from Dialogflow.');
-        }
-      } catch (error) {
-        print('Error occurred during Dialogflow request: $error');
-      }
+      // dialogflow 연동
+      DetectIntentResponse response = await getResponse(dialogflow, text);
+
+      print(response);
+      print(response.toJson());
+      print(response.message);
+      print(response.text);
+      print(response.toJson());
+      print(bookFind(response));
+
+      // Bot 응답 시뮬레이션
+      var botResponse = response.text;
+      //await Future.delayed(Duration(seconds: 1));  // 네트워크 지연 시뮬레이션
+      setState(() {
+        messages.add({
+          'id': now.add(Duration(seconds: 1)).millisecondsSinceEpoch.toString(),
+          'userType': 'ChakBot',
+          'text': botResponse,
+          'time': now.add(Duration(seconds: 1)),
+        });
+      });
+      manager.updateLastMessage(widget.roomId, botResponse as String, now.add(Duration(seconds: 1)));
     }
-  }
-
-  Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String query) async {
-    final QueryInput queryInput = QueryInput(text: TextInput(text: query));
-    final DetectIntentResponse response = await dialogflow.detectIntent(queryInput: queryInput);
-    return response;
   }
 
   @override

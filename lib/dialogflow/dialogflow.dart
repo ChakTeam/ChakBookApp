@@ -1,23 +1,16 @@
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'info.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 
 Info info = Info();
 
 
-Future<DialogFlowtter> getDialogflow() async {
-  final String response = await rootBundle.loadString('assets/credentials.json');
-  final Map<String, dynamic> credentials = json.decode(response);
-
-  DialogAuthCredentials dialogAuthCredentials = DialogAuthCredentials.fromJson(credentials);
+DialogFlowtter getDialogflow() {
+  DialogAuthCredentials credentials = DialogAuthCredentials.fromJson(info.key);
 
   final DialogFlowtter dialogflow = DialogFlowtter(
-      credentials: dialogAuthCredentials,
+      credentials: credentials,
       sessionId: info.sessionId,
       projectId: info.projectId
   );
-
-
   return dialogflow;
 }
