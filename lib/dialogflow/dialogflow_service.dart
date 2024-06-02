@@ -1,10 +1,10 @@
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import '../book/book_find.dart';
 import '../model/book.dart';
+import 'dialogflow.dart';
 
 /*
-사용
-  late DialogFlowtter dialogflow = getDialogflow(); - dialogflow 연동
+  late DialogFlowtter dialogflow = getDialogflow(); // dialogflow 연동
 
   void sendMessage(String text) async {
     // 빈 문자열 검사 로직
@@ -20,7 +20,7 @@ import '../model/book.dart';
       addMessage(response.message!);
     });
   }
-
+*/
 // 연결 응답 받기
 Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String text) async {
   QueryInput queryInput = QueryInput(
