@@ -115,6 +115,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // print(response.text);
       String intent = response.toJson()['queryResult']['intent']['displayName'];
       print(intent); // intent 반환
+
+      // 다른책검색이 아닐 경우에만 새로 검색.
       bookList = await bookFind(response);
       // bookList가 null이 아닌 경우에만 출력
       if (bookList != null) {
