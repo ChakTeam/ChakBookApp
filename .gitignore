@@ -261,4 +261,4 @@ fabric.properties
 
 # ========
 assets/cred.json
-lib/dialogflow/dialogflow.dart
+lib/dialogflow/info.dart
