@@ -48,7 +48,10 @@ Future<List<Book>?> bookFind(DetectIntentResponse response) async {
   } else if (parameters != null && parameters["Keyword"] != null) {
     print("Keyword");
     return bookService.getBookList(parameters["Keyword"], "Keyword");
-  } else {
+  } else if (parameters != null && parameters["Publisher"] != null){
+    print("Publisher");
+    return bookService.getBookList(parameters["Publisher"], "Publisher");
+  }   else {
     return null;
   }
 }
