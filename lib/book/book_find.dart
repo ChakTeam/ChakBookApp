@@ -11,8 +11,8 @@ class BookService {
 
     String strParameterQuery = "query=$query";
     String strParameterTarget = "target=$target";
-    String strUrl = "$API_SERVER?$strParameterQuery&$strParameterTarget";
-
+    String strParameterSize = "size=2";
+    String strUrl = "$API_SERVER?$strParameterQuery&$strParameterTarget&$strParameterSize";
     var response = await http.get(Uri.parse(strUrl),
         headers: {"Authorization": "KakaoAK $REST_API_KEY"}
     );
@@ -22,6 +22,7 @@ class BookService {
 
     return bookList;
   }
+
 
 
 }

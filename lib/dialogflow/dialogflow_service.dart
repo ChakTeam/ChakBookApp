@@ -42,14 +42,14 @@ Future<List<Book>?> bookFind(DetectIntentResponse response) async {
   BookService bookService = BookService();
 
   Map<String, dynamic>? parameters = response.queryResult?.parameters;
-  if (parameters != null && parameters["Author"] != null) {
-    print("author");
+  if (parameters != null && parameters["Author"] != null && parameters["Author"] != "") {
+    print("author, parameters : " + parameters["Author"]);
     return bookService.getBookList(parameters["Author"], "Author");
-  } else if (parameters != null && parameters["Keyword"] != null) {
-    print("Keyword");
+  } else if (parameters != null && parameters["Keyword"] != null && parameters["Keyword"] != "") {
+    print("Keyword, parameters : " + parameters["Keyword"] );
     return bookService.getBookList(parameters["Keyword"], "Keyword");
-  } else if (parameters != null && parameters["Publisher"] != null){
-    print("Publisher");
+  } else if (parameters != null && parameters["Publisher"] != null && parameters["Publisher"] != ""){
+    print("Publisher, parameters : " + parameters["Publisher"] );
     return bookService.getBookList(parameters["Publisher"], "Publisher");
   }   else {
     return null;

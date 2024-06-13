@@ -54,22 +54,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                return Align(
-                  alignment: message['userType'] == 'ChakBot' ? Alignment.centerLeft : Alignment.centerRight,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                    decoration: BoxDecoration(
-                        color: message['userType'] == 'ChakBot' ? Colors.green.shade100 : Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.black.withOpacity(0.2))
+                if (message['type'] == 'book') {
+                  return BookMessageWidget(book: message['book']);
+                } else {
+                  return Align(
+                    alignment: message['userType'] == 'ChakBot' ? Alignment.centerLeft : Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      decoration: BoxDecoration(
+                          color: message['userType'] == 'ChakBot' ? Colors.green.shade100 : Colors.blue.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.black.withOpacity(0.2))
+                      ),
+                      child: Text(
+                        message['text'],
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                    child: Text(
-                      message['text'],
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           ),
@@ -124,15 +128,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // print(response.text);
       String intent = response.toJson()['queryResult']['intent']['displayName'];
       print(intent); // intent 반환
-      bookList = await bookFind(response);
-      // bookList가 null이 아닌 경우에만 출력
-      if (bookList != null) {
-        for (Book book in bookList!) {
-          print(book.toString());
-        }
-      } else {
-        print('Book list is null.');
+
+      // // 검색 관련 intent일 경우에 검색
+      if ( intent == "001-Book Start" ||
+          intent == "010-different-book" ) {
+      } else{
+        bookList = await bookFind(response);
       }
+      print(response);
+
+
 
       // Bot 응답 시뮬레이션
       var botResponse = response.text;
@@ -147,11 +152,90 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       });
       manager.updateLastMessage(widget.roomId, botResponse as String, now.add(Duration(seconds: 1)));
     }
+    // bookList가 null이 아닌 경우에만 출력
+    if (bookList != null) {
+      for (Book book in bookList!) {
+        setState(() {
+          messages.add({
+            'id': DateTime.now().millisecondsSinceEpoch.toString(),
+            'userType': 'ChakBot',
+            'type': 'book',
+            'book': book,
+            'time': DateTime.now(),
+          });
+        });
+      }
+    } else {
+      print('Book list is null.');
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
     dialogflow.dispose();
+  }
+}
+class BookMessageWidget extends StatelessWidget {
+  final Book book;
+
+  const BookMessageWidget({Key? key, required this.book}) : super(key: key);
+
+  bool _isValidUrl(String? url) {
+    return url != null && url.isNotEmpty && Uri.tryParse(url)?.hasAbsolutePath == true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        decoration: BoxDecoration(
+            color: Colors.green.shade100,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.black.withOpacity(0.2))
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_isValidUrl(book.thumbnail))
+              Image.network(
+                book.thumbnail!,
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              )
+            else
+              Container(
+                height: 100,
+                width: 100,
+                color: Colors.grey.shade300,
+                child: Icon(
+                  Icons.image_not_supported,
+                  color: Colors.grey.shade700,
+                  size: 50,
+                ),
+              ),
+            SizedBox(height: 8),
+            Text(
+              book.title ?? 'No title',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            if (book.authors != null)
+              Text(
+                'Author(s): ${book.authors!.join(', ')}',
+                style: TextStyle(fontSize: 14),
+              ),
+            if (book.contents != null)
+              Text(
+                'Contents: ${book.contents}',
+                style: TextStyle(fontSize: 14),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
