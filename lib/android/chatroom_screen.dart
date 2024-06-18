@@ -282,12 +282,13 @@ class BookMessageWidget extends StatelessWidget {
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
-    if (await canLaunch(uri.toString())) {
-      await launch(uri.toString());
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       throw 'Could not launch $url';
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
