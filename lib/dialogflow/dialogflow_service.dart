@@ -38,19 +38,19 @@ Future<DetectIntentResponse> getResponse(DialogFlowtter dialogflow, String text)
 }
 
 // parameter 추출
-Future<List<Book>?> bookFind(DetectIntentResponse response) async {
+Future<List<Book>?> bookFind(DetectIntentResponse response, int page) async {
   BookService bookService = BookService();
 
   Map<String, dynamic>? parameters = response.queryResult?.parameters;
-  if (parameters != null && parameters["Author"] != null) {
-    print("author");
-    return bookService.getBookList(parameters["Author"], "Author");
-  } else if (parameters != null && parameters["Keyword"] != null) {
-    print("Keyword");
-    return bookService.getBookList(parameters["Keyword"], "Keyword");
-  } else if (parameters != null && parameters["Publisher"] != null){
-    print("Publisher");
-    return bookService.getBookList(parameters["Publisher"], "Publisher");
+  if (parameters != null && parameters["Author"] != null && parameters["Author"] != "") {
+    print("author, parameters : " + parameters["Author"]);
+    return bookService.getBookList(parameters["Author"], "person", page);
+  } else if (parameters != null && parameters["Keyword"] != null && parameters["Keyword"] != "") {
+    print("Keyword, parameters : " + parameters["Keyword"] );
+    return bookService.getBookList(parameters["Keyword"], "title", page);
+  } else if (parameters != null && parameters["Publisher"] != null && parameters["Publisher"] != ""){
+    print("Publisher, parameters : " + parameters["Publisher"] );
+    return bookService.getBookList(parameters["Publisher"], "Publisher", page);
   }   else {
     return null;
   }

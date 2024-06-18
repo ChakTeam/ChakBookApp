@@ -6,13 +6,15 @@ class BookService {
   static final String API_SERVER = "https://dapi.kakao.com/v3/search/book";
   static final String REST_API_KEY = "79849cd9fe6e22dc9e0507bc893fd93a";
 
-  Future<List<Book>> getBookList(String query, String target) async {
+  Future<List<Book>> getBookList(String query, String target, int page) async {
     List<Book> bookList = List.empty(growable: true);
 
     String strParameterQuery = "query=$query";
     String strParameterTarget = "target=$target";
-    String strUrl = "$API_SERVER?$strParameterQuery&$strParameterTarget";
-
+    String strParameterSize = "size=2";
+    String strParameterPage = "page=$page";
+    String strUrl = "$API_SERVER?$strParameterQuery&$strParameterTarget&$strParameterSize&$strParameterPage";
+    print(strUrl);
     var response = await http.get(Uri.parse(strUrl),
         headers: {"Authorization": "KakaoAK $REST_API_KEY"}
     );
@@ -22,6 +24,4 @@ class BookService {
 
     return bookList;
   }
-
-
 }
