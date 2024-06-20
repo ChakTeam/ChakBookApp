@@ -23,6 +23,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   List<Book>? bookList;
   int page = 1;
   DetectIntentResponse? response;
+  DetectIntentResponse? searchResponse;
   ScrollController _scrollController = ScrollController();
   List<Book> selectedBooks = []; // 선택된 책 리스트
 
@@ -206,13 +207,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       } // 다른 책 요청일 경우 page 변경
       else if (intent == "010-different-book") {
         page++;
-        bookList = await bookFind(response!, page);
+        bookList = await bookFind(searchResponse!, page);
       } else if (intent == "020-Saved-Book") {
         saveSelectedBooks;
         bookList = selectedBooks;
       } else {
         page = 1;
         bookList = await bookFind(response!, page);
+        searchResponse = response;
       }
       print(response);
 
